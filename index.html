@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web Technology & PHP Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Web Technology & PHP Quiz</h1>
+  <p id="message">Answer the questions below and click "Submit" to see your score.</p>
+  <form id="quizForm" onsubmit="return false;" autocomplete="off"></form>
+  <button type="button" onclick="submitQuiz()">Submit</button>
+  <button type="button" onclick="resetQuiz()">Reset</button>
+  <div id="score"></div>
+
+  <script>
+    const questions = [
+      {"question": "What is Web 2.0?", "answer": "Technology that enables user interaction and collaboration"},
+      {"question": "Give two examples of Web 2.0 applications.", "answer": ["Social Networking", "Blogs"]},
+      {"question": "What does MVC stand for?", "answer": "Model-View-Controller"},
+      {"question": "Where do you save a CodeIgniter controller?", "answer": "Controllers folder"},
+      {"question": "How does CodeIgniter connect to a database?", "answer": "Using models"},
+      {"question": "What is XAMPP?", "answer": "A local web server environment"},
+      {"question": "Where do you configure database settings in CodeIgniter?", "answer": "Application/config/database.php"},
+      {"question": "What programming language powers Facebook’s back-end?", "answer": "PHP"},
+      {"question": "What is PHP?", "answer": "A server-side programming language"},
+      {"question": "What does PHP stand for?", "answer": "PHP Hypertext Preprocessor"},
+      {"question": "What does PHP execute on?", "answer": "The web server"},
+      {"question": "What syntax starts a PHP script?", "answer": "< ? php no space"},
+      {"question": "What symbol is used for variables in PHP?", "answer": "$"},
+      {"question": "How do you create a constant in PHP?", "answer": "Using define()"},
+      {"question": "Which PHP function outputs data to the browser?", "answer": "echo"},
+      {"question": "What does the period (.) do in PHP?", "answer": "Concatenates strings"},
+      {"question": "What is the role of the modulus (%) operator?", "answer": "Finds the remainder of a division"},
+      {"question": "What comparison operator checks if two values are equal?", "answer": "=="},
+      {"question": "How do you start an IF statement in PHP?", "answer": "if(condition) { }"},
+      {"question": "What statement handles multiple conditions in PHP?", "answer": "switch"},
+      {"question": "Which PHP superglobal retrieves data from a form using POST?", "answer": "$_POST"},
+      {"question": "Which PHP superglobal retrieves data from a form using GET?", "answer": "$_GET"},
+      {"question": "Where does PHP store form values?", "answer": "In an associative array"},
+      {"question": "How do you reference a textbox named 'txtName' in PHP with POST?", "answer": "$_POST['txtName']"},
+      {"question": "What HTML tag creates a form?", "answer": "< form > no space"},
+      {"question": "What PHP function defines a constant?", "answer": "define()"},
+      {"question": "Which function is used for arithmetic operations in PHP?", "answer": "+, -, *, /, %"},
+    ];
+
+    const quizForm = document.getElementById('quizForm');
+
+    function shuffleArray(array) {
+      const copy = array.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function renderQuiz() {
+      const shuffledQuestions = shuffleArray(questions);
+      shuffledQuestions.forEach((q, index) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question';
+        questionDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+
+        const answers = Array.isArray(q.answer) ? q.answer : [q.answer];
+        answers.forEach((_, ansIndex) => {
+          questionDiv.innerHTML += `
+            <input 
+              type="text" 
+              name="question${index}answer${ansIndex}" 
+              class="answerInput" 
+              autocomplete="off" 
+              required
+            >
+          `;
+        });
+
+        questionDiv.innerHTML += `<p class="correctAnswer" style="display: none;">Correct answer: ${answers.join(', ')}</p>`;
+        quizForm.appendChild(questionDiv);
+      });
+    }
+
+    function submitQuiz() {
+      let score = 0;
+      const correctAnswers = document.querySelectorAll('.correctAnswer');
+      const totalQuestions = questions.length;
+
+      questions.forEach((q, index) => {
+        const answers = Array.isArray(q.answer) ? q.answer.map(a => a.toLowerCase()) : [q.answer.toLowerCase()];
+        const userAnswers = answers.map((_, ansIndex) => {
+          const input = document.querySelector(`input[name="question${index}answer${ansIndex}"]`);
+          return input ? input.value.trim().toLowerCase() : "";
+        });
+
+        const isCorrect = userAnswers.every((userAnswer, i) => answers[i] === userAnswer);
+        if (isCorrect) {
+          score++;
+          correctAnswers[index].style.display = 'none';
+        } else {
+          correctAnswers[index].style.display = 'block';
+        }
+      });
+
+      document.getElementById('score').innerText = `Your score is ${score} out of ${totalQuestions}`;
+    }
+
+    function resetQuiz() {
+      quizForm.innerHTML = '';
+      document.getElementById('score').innerText = '';
+      renderQuiz();
+    }
+
+    renderQuiz();
+  </script>
+</body>
+</html>
